@@ -31,7 +31,9 @@ class Restaurant(Place):
 
 class Bar(Restaurant):
     def save(self, *args, **kwargs):
-       raise RuntimeError('bad save method')
+        if hasattr(self, 'skip_history_when_saving'):
+            raise RuntimeError('bad save method')
+        return super(Bar, self).save(*args, **kwargs)
 
 
 class FileModel(models.Model):

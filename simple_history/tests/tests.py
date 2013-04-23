@@ -105,6 +105,9 @@ class HistoricalRecordsTest(TestCase):
         with self.assertRaises(RuntimeError):
             broken_bar.save_without_historical_record()
         self.assertFalse(hasattr(broken_bar, 'skip_history_when_saving'))
+        self.assertEqual(Bar.updates.count(), 0)
+        broken_bar.save()
+        self.assertEqual(Bar.updates.count(), 1)
 
     def test_foreignkey_field(self):
         why_poll = Poll.objects.create(question="why?", pub_date=today)
