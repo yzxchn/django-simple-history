@@ -9,10 +9,10 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
-    'simple_history.tests',
-    'simple_history.tests.custom_user',
-    'simple_history.tests.external',
-    'simple_history.tests.migration_test_app',
+    'tests',
+    'tests.custom_user',
+    'tests.external',
+    'tests.migration_test_app',
 
     'simple_history',
 
@@ -31,7 +31,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-ROOT_URLCONF = 'simple_history.tests.urls'
+ROOT_URLCONF = 'tests.urls'
 
 SECRET_KEY = 'mock secret'
 

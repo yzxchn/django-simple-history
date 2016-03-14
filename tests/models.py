@@ -189,7 +189,7 @@ class SelfFK(models.Model):
     history = HistoricalRecords()
 
 
-register(User, app='simple_history.tests', manager_name='histories')
+register(User, app='tests', manager_name='histories')
 
 
 class ExternalModel1(models.Model):
@@ -203,7 +203,7 @@ class ExternalModel1(models.Model):
 class ExternalModel3(models.Model):
     name = models.CharField(max_length=100)
 
-register(ExternalModel3, app='simple_history.tests.external',
+register(ExternalModel3, app='tests.external',
          manager_name='histories')
 
 

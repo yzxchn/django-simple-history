@@ -16,8 +16,8 @@ setuptools.setup(
     maintainer='Trey Hunner',
     url='https://github.com/treyhunner/django-simple-history',
     packages=setuptools.find_packages(exclude=[
-        'simple_history.tests',
-        'simple_history.tests.*',
+        'tests',
+        'tests.*',
     ]),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
