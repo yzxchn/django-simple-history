@@ -37,7 +37,7 @@ setuptools.setup(
     tests_require=[
         'Django>=1.6',
         'django-webtest==1.7.8',
-        'mock==1.0.1',
+        'mock',
         'pytest',
         'pytest-django',
         'WebTest==2.0.18',
