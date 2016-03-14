@@ -791,21 +791,21 @@ class CustomTableNameTest1(TestCase):
 class TestTrackingInheritance(TestCase):
 
     def test_tracked_abstract_base(self):
-        class TestModel(TrackedAbstractBaseA):
+        class TestModel1(TrackedAbstractBaseA):
             pass
 
         self.assertEqual(
-            [f.attname for f in TestModel.history.model._meta.fields],
+            [f.attname for f in TestModel1.history.model._meta.fields],
             ['id', 'history_id', 'history_date',
              'history_user_id', 'history_type'],
         )
 
     def test_tracked_concrete_base(self):
-        class TestModel(TrackedConcreteBase):
+        class TestModel2(TrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TestModel.history.model._meta.fields],
+            [f.attname for f in TestModel2.history.model._meta.fields],
             ['id', 'trackedconcretebase_ptr_id', 'history_id',
              'history_date', 'history_user_id', 'history_type'],
         )
@@ -817,11 +817,11 @@ class TestTrackingInheritance(TestCase):
                 pass
 
     def test_tracked_abstract_and_untracked_concrete_base(self):
-        class TestModel(TrackedAbstractBaseA, UntrackedConcreteBase):
+        class TestModel3(TrackedAbstractBaseA, UntrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TestModel.history.model._meta.fields],
+            [f.attname for f in TestModel3.history.model._meta.fields],
             ['id', 'untrackedconcretebase_ptr_id', 'history_id',
              'history_date', 'history_user_id', 'history_type'],
         )
@@ -830,11 +830,11 @@ class TestTrackingInheritance(TestCase):
         class BaseTrackedWithIndirectTrackedAbstractBase(TrackedAbstractBaseA):
             pass
 
-        class TestModel(BaseTrackedWithIndirectTrackedAbstractBase):
+        class TestModel4(BaseTrackedWithIndirectTrackedAbstractBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TestModel.history.model._meta.fields],
+            [f.attname for f in TestModel4.history.model._meta.fields],
             ['id', 'basetrackedwithindirecttrackedabstractbase_ptr_id',
              'history_id', 'history_date', 'history_user_id', 'history_type'],
         )
@@ -843,11 +843,11 @@ class TestTrackingInheritance(TestCase):
         class BaseTrackedWithIndirectTrackedConcreteBase(TrackedAbstractBaseA):
             pass
 
-        class TestModel(BaseTrackedWithIndirectTrackedConcreteBase):
+        class TestModel5(BaseTrackedWithIndirectTrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TestModel.history.model._meta.fields],
+            [f.attname for f in TestModel5.history.model._meta.fields],
             ['id', 'basetrackedwithindirecttrackedconcretebase_ptr_id',
              'history_id', 'history_date', 'history_user_id', 'history_type'],
         )
