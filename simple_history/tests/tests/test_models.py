@@ -20,7 +20,7 @@ from ..models import (
     HistoricalState, HistoricalCustomFKError, Series, SeriesWork, PollInfo,
     UserAccessorDefault, UserAccessorOverride, Employee, Country, Province,
     City, Contact, ContactRegister,
-    TrackedAbstractBaseA, TrackedAbstractBaseB, UntrackedAbstractBase,
+    TrackedAbstractBaseA, TrackedAbstractBaseB,
     TrackedConcreteBase, UntrackedConcreteBase,
 )
 from ..external.models import ExternalModel2, ExternalModel4
@@ -326,7 +326,8 @@ class RegisterTest(TestCase):
         self.assertEqual(len(choice.history.all()), 1)
 
     def test_register_separate_app(self):
-        get_history = lambda model: model.history
+        def get_history(model):
+            return model.history
         self.assertRaises(AttributeError, get_history, User)
         self.assertEqual(len(User.histories.all()), 0)
         user = User.objects.create(username='bob', password='pass')
@@ -470,7 +471,9 @@ class HistoryManagerTest(TestCase):
         most_recent = poll.history.most_recent()
         self.assertEqual(most_recent.question, "why?")
         times = [r.history_date for r in poll.history.all()]
-        question_as_of = lambda time: poll.history.as_of(time).question
+
+        def question_as_of(time):
+            return poll.history.as_of(time).question
         self.assertEqual(question_as_of(times[0]), "why?")
         self.assertEqual(question_as_of(times[1]), "how's it going?")
         self.assertEqual(question_as_of(times[2]), "what's up?")
@@ -494,7 +497,9 @@ class HistoryManagerTest(TestCase):
         most_recent = choice.history.most_recent()
         self.assertEqual(most_recent.poll.pk, how_poll.pk)
         times = [r.history_date for r in choice.history.all()]
-        poll_as_of = lambda time: choice.history.as_of(time).poll
+
+        def poll_as_of(time):
+            return choice.history.as_of(time).poll
         self.assertEqual(poll_as_of(times[0]).pk, how_poll.pk)
         self.assertEqual(poll_as_of(times[1]).pk, why_poll.pk)
 
@@ -786,63 +791,65 @@ class CustomTableNameTest1(TestCase):
 class TestTrackingInheritance(TestCase):
 
     def test_tracked_abstract_base(self):
-        class TrackedWithAbstractBase(TrackedAbstractBaseA):
+        class TestModel(TrackedAbstractBaseA):
             pass
 
         self.assertEqual(
-            [f.attname for f in TrackedWithAbstractBase.history.model._meta.fields],
-            ['id', 'history_id', 'history_date', 'history_user_id', 'history_type'],
+            [f.attname for f in TestModel.history.model._meta.fields],
+            ['id', 'history_id', 'history_date',
+             'history_user_id', 'history_type'],
         )
 
     def test_tracked_concrete_base(self):
-        class TrackedWithConcreteBase(TrackedConcreteBase):
+        class TestModel(TrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TrackedWithConcreteBase.history.model._meta.fields],
-            ['id', 'trackedconcretebase_ptr_id', 'history_id', 'history_date', 'history_user_id', 'history_type'],
+            [f.attname for f in TestModel.history.model._meta.fields],
+            ['id', 'trackedconcretebase_ptr_id', 'history_id',
+             'history_date', 'history_user_id', 'history_type'],
         )
 
     def test_multiple_tracked_bases(self):
         with self.assertRaises(exceptions.MultipleRegistrationsError):
-            class TrackedWithMultipleAbstractBases(TrackedAbstractBaseA, TrackedAbstractBaseB):
+            class TrackedWithMultipleAbstractBases(
+                    TrackedAbstractBaseA, TrackedAbstractBaseB):
                 pass
 
     def test_tracked_abstract_and_untracked_concrete_base(self):
-        class TrackedWithTrackedAbstractAndUntrackedConcreteBase(TrackedAbstractBaseA, UntrackedConcreteBase):
+        class TestModel(TrackedAbstractBaseA, UntrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TrackedWithTrackedAbstractAndUntrackedConcreteBase.history.model._meta.fields],
-            ['id', 'untrackedconcretebase_ptr_id', 'history_id', 'history_date', 'history_user_id', 'history_type'],
+            [f.attname for f in TestModel.history.model._meta.fields],
+            ['id', 'untrackedconcretebase_ptr_id', 'history_id',
+             'history_date', 'history_user_id', 'history_type'],
         )
 
     def test_indirect_tracked_abstract_base(self):
         class BaseTrackedWithIndirectTrackedAbstractBase(TrackedAbstractBaseA):
             pass
 
-        class TrackedWithIndirectTrackedAbstractBase(BaseTrackedWithIndirectTrackedAbstractBase):
+        class TestModel(BaseTrackedWithIndirectTrackedAbstractBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TrackedWithIndirectTrackedAbstractBase.history.model._meta.fields],
-            [
-                'id', 'basetrackedwithindirecttrackedabstractbase_ptr_id',
-                'history_id', 'history_date', 'history_user_id', 'history_type'],
+            [f.attname for f in TestModel.history.model._meta.fields],
+            ['id', 'basetrackedwithindirecttrackedabstractbase_ptr_id',
+             'history_id', 'history_date', 'history_user_id', 'history_type'],
         )
 
     def test_indirect_tracked_concrete_base(self):
         class BaseTrackedWithIndirectTrackedConcreteBase(TrackedAbstractBaseA):
             pass
 
-        class TrackedWithIndirectTrackedConcreteBase(BaseTrackedWithIndirectTrackedConcreteBase):
+        class TestModel(BaseTrackedWithIndirectTrackedConcreteBase):
             pass
 
         self.assertEqual(
-            [f.attname for f in TrackedWithIndirectTrackedConcreteBase.history.model._meta.fields],
-            [
-                'id', 'basetrackedwithindirecttrackedconcretebase_ptr_id',
-                'history_id', 'history_date', 'history_user_id', 'history_type'],
+            [f.attname for f in TestModel.history.model._meta.fields],
+            ['id', 'basetrackedwithindirecttrackedconcretebase_ptr_id',
+             'history_id', 'history_date', 'history_user_id', 'history_type'],
         )
 
     def test_registering_with_tracked_abstract_base(self):

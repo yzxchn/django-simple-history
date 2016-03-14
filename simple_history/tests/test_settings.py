@@ -22,7 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
 ]
 
-MEDIA_ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test_files')
+MEDIA_ROOT = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), 'test_files')
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -36,7 +37,7 @@ SECRET_KEY = 'mock secret'
 
 STATIC_URL = '/static/'
 
-TEMPLATES=[{
+TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'APP_DIRS': True,
 }]

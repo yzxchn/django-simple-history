@@ -186,8 +186,8 @@ class AdminSiteTest(WebTest):
     def test_middleware_saves_user(self):
         overridden_settings = {
             'MIDDLEWARE_CLASSES':
-                settings.MIDDLEWARE_CLASSES
-                + ['simple_history.middleware.HistoryRequestMiddleware'],
+                settings.MIDDLEWARE_CLASSES +
+                ['simple_history.middleware.HistoryRequestMiddleware'],
         }
         with override_settings(**overridden_settings):
             self.login()
@@ -200,8 +200,8 @@ class AdminSiteTest(WebTest):
     def test_middleware_anonymous_user(self):
         overridden_settings = {
             'MIDDLEWARE_CLASSES':
-                settings.MIDDLEWARE_CLASSES
-                + ['simple_history.middleware.HistoryRequestMiddleware'],
+                settings.MIDDLEWARE_CLASSES +
+                ['simple_history.middleware.HistoryRequestMiddleware'],
         }
         with override_settings(**overridden_settings):
             self.app.get(reverse('admin:index'))
@@ -384,7 +384,8 @@ class AdminSiteTest(WebTest):
             'root_path': getattr(admin_site, 'root_path', None),
         }
 
-        mock_render.assert_called_once_with(request, admin.object_history_form_template, context)
+        mock_render.assert_called_once_with(
+            request, admin.object_history_form_template, context)
 
     def test_history_form_view_getting_history(self):
         request = RequestFactory().post('/')
@@ -439,7 +440,8 @@ class AdminSiteTest(WebTest):
             'root_path': getattr(admin_site, 'root_path', None),
         }
 
-        mock_render.assert_called_once_with(request, admin.object_history_form_template, context)
+        mock_render.assert_called_once_with(
+            request, admin.object_history_form_template, context)
 
     def test_history_form_view_getting_history_with_setting_off(self):
         request = RequestFactory().post('/')
@@ -493,4 +495,5 @@ class AdminSiteTest(WebTest):
             'root_path': getattr(admin_site, 'root_path', None),
         }
 
-        mock_render.assert_called_once_with(request, admin.object_history_form_template, context)
+        mock_render.assert_called_once_with(
+            request, admin.object_history_form_template, context)

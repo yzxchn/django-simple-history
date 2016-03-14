@@ -29,7 +29,8 @@ SIMPLE_HISTORY_EDIT = getattr(settings, 'SIMPLE_HISTORY_EDIT', False)
 
 def render(request, *args, **kwargs):
     if django.VERSION < (1, 8):
-        return django_render(request, current_app=request.current_app, *args, **kwargs)
+        return django_render(
+            request, current_app=request.current_app, *args, **kwargs)
     return django_render(request, *args, **kwargs)
 
 
