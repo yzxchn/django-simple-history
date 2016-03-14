@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import django
 from django import http
 from django.core.exceptions import PermissionDenied
 from django.conf.urls import url
@@ -7,7 +8,8 @@ from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render as django_render
+
 from django.utils.text import capfirst
 from django.utils.html import mark_safe
 from django.utils.translation import ugettext as _
@@ -23,6 +25,12 @@ USER_NATURAL_KEY = tuple(
     key.lower() for key in settings.AUTH_USER_MODEL.split('.', 1))
 
 SIMPLE_HISTORY_EDIT = getattr(settings, 'SIMPLE_HISTORY_EDIT', False)
+
+
+def render(request, *args, **kwargs):
+    if django.VERSION < (1, 8):
+        return django_render(request, current_app=request.current_app, *args, **kwargs)
+    return django_render(request, *args, **kwargs)
 
 
 class SimpleHistoryAdmin(admin.ModelAdmin):
@@ -75,8 +83,7 @@ class SimpleHistoryAdmin(admin.ModelAdmin):
             'admin_user_view': admin_user_view
         }
         context.update(extra_context or {})
-        return render(request, template_name=self.object_history_template,
-                      dictionary=context, current_app=request.current_app)
+        return render(request, self.object_history_template, context)
 
     def response_change(self, request, obj):
         if '_change_history' in request.POST and SIMPLE_HISTORY_EDIT:
@@ -178,8 +185,7 @@ class SimpleHistoryAdmin(admin.ModelAdmin):
             'save_on_top': self.save_on_top,
             'root_path': getattr(self.admin_site, 'root_path', None),
         }
-        return render(request, template_name=self.object_history_form_template,
-                      dictionary=context, current_app=request.current_app)
+        return render(request, self.object_history_form_template, context)
 
     def save_model(self, request, obj, form, change):
         """Set special model attribute to user for reference after save"""
