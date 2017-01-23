@@ -311,7 +311,10 @@ class HistoricalRecordsTest(TestCase):
         p = PollWithExcludeFields(question="what's up?", pub_date=today)
         p.save()
         history = PollWithExcludeFields.history.all()[0]
-        all_fields_names = history._meta.get_all_field_names()
+        try:
+            all_fields_names = {f.name for f in history._meta.get_fields()}
+        except AttributeError:  # Django < 1.8
+            all_fields_names = history._meta.get_all_field_names()
         self.assertIn('question', all_fields_names)
         self.assertNotIn('pub_date', all_fields_names)
 
