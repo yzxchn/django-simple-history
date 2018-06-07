@@ -287,6 +287,7 @@ class HistoricalRecords(object):
             'instance_type': model,
             'next_record': property(get_next_record),
             'prev_record': property(get_prev_record),
+            'excluded_fields': self.excluded_fields,
             'revert_url': revert_url,
             '__str__': lambda self: '%s as of %s' % (self.history_object,
                                                      self.history_date)

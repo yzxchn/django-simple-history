@@ -17,6 +17,7 @@ def get_history_model_for_model(model):
 
 def bulk_history_create(model, history_model, batch_size):
     """Save a copy of all instances to the historical model."""
+    excluded = set(history_model.excluded_fields)
     historical_instances = [
         history_model(
             history_date=getattr(instance, '_history_date', now()),
@@ -24,6 +25,7 @@ def bulk_history_create(model, history_model, batch_size):
             **{
                 field.attname: getattr(instance, field.attname)
                 for field in instance._meta.fields
+                if field.name not in excluded
             }
         ) for instance in model.objects.all()]
     history_model.objects.bulk_create(historical_instances,
